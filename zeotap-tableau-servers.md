@@ -89,7 +89,7 @@ Although permission had changed on a day before (23rd Aug'22) but we observed th
 
 Never perform changes in Production environment as "production changes" should be always performed in well planned "change-management" process with a roll-back plan if anything goes wrong in production.
 
-Some linux commands are too small but very powerful, so please always execute them in a test environment unless you don't know the impact/output of the command.
+Some linux commands are too small but very powerful, always execute them in a test environment unless you don't know the impact/output of the command.
 
 Never change the file/folder permissions which has application files, as It can interrupt the running services.
 
