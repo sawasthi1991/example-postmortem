@@ -31,6 +31,7 @@ Detection: Rackspace Infra team detected that tableau servers are un-responsive 
 Action Items: 
 
 Day1-
+
 Raised a support case with MGCP team to stating the SSH issue - Aravind Informed the engagement manager over the phone and explained that MGCP is not considering this case as P1.
 
 Investigated the serial console logs with zeotap team and found that the permission/ownership for /var/empty/sshd is not correct.
@@ -44,6 +45,7 @@ Checked the application status - tsm status -v and found that Application is not
 
 
 Day2-
+
 Removed all ACL's from /var/opt/xxx/xxx/xxx/backgrounder (setfacl -b -R var).
 
 Created a clone server from an older snapshot (Jan 2022).Checked permssion for /var files and folder on clone server and replicated the same on Node1, Node2 and Node3.
@@ -55,6 +57,7 @@ Checked the application status again and found that it is not running.
 
 
 Day3-
+
 Had a call with tableau support where support person checked the application controller status and logs, and found that, admin controller is not working over the node1 so we have been adviced by support to re-install the tab admin controller on node1 and check the admin controller logs after completion of installation to identify if there are any permission exceptions in the admin controller logs under /var/opt/tableau/xxx/xxx/xxx/logs/tabadmincontroller.
 
 Changed the permissions for particular directories which were listed as exceptions in the admin controller logs. At this stage there were no more permission exceptions however a new error occured-
@@ -65,6 +68,7 @@ This error was troubleshooted by client over the weekend and they made few more 
 
 
 Day4 and Day5-
+
 In further troubleshooting we found tableau Gateway service was in error state.
 
 Checked the apache startup and error logs and found proxy mutex error and also some permission related exceptions for apache_access_logs as it was owned by "root"  instead of "tableau" user.
