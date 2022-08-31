@@ -4,7 +4,7 @@ Date: 2022-08-24
 
 Authors: Shubham Awasthi, Arpit shridhar, Mahesh Saidu
 
-Status: In-progress
+Status: Complete
 
 Summary: Tableau application down and Infra team is unable to SSH in all 3 tableau VMs -
 
