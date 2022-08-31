@@ -85,25 +85,23 @@ Lessons Learned-
 
 Backup policy should be in place, automated daily or weekly snapshots should be always scheduled for critical applications.
 
-Although permssion had changed on a day before (23th Aug'22) but we observed the issue on 24th Aug when we tried to SSH one of the cluster's node.
-Which makes clear that Monitoring policies are not configured. There should be monitoring alerts/Uptime checks to monitor the application status.
+Although permission had changed on a day before (23rd Aug'22) but we observed the issue on 24th Aug when we tried to SSH one of the cluster's node. Which makes clear that Monitoring policies are not configured. There should be monitoring alerts/Uptime checks to monitor the application status.
 
 Never perform changes in Production environment as "production changes" should be always performed in well planned "change-management" process with a roll-back plan if anything goes wrong in production.
 
-Some linux commands are too small but very powerful, so please always execute them in a test environment unless you dont know the impact/output of the command.
+Some linux commands are too small but very powerful, so please always execute them in a test environment unless you don't know the impact/output of the command.
 
-Never change the file/folder permissions which has application files, as It can intrupt the running services.
+Never change the file/folder permissions which has application files, as It can interrupt the running services.
 
-While performing the production changes, always go in a sequence, for example -
-If same changes need to performed in a cluster of 3 nodes - 
+While performing the production changes, always go in a sequence, for example - If same changes need to performed in a cluster of 3 nodes -
 
-1. Take the latest snapshot of 1st node.
-2. Peform the neccessary changes.
-3. Verify the application and services status.
-4. If everything is working, only then move to the 2nd node.
-5. Take the latest snapshot of 2nd node.
-6. Peform the neccessary changes.
-7. Verify the application and services status on 2nd node and continue in the same sequence ........!
+Take the latest snapshot of 1st node.
+Perform the necessary changes.
+Verify the application and services status.
+If everything is working, only then move to the 2nd node.
+Take the latest snapshot of 2nd node.
+Perform the necessary changes.
+Verify the application and services status on 2nd node and continue in the same sequence...!
 
 
 
