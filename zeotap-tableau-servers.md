@@ -1,4 +1,4 @@
-zeotap-tableau-servers incident
+Zeotap-Tableau-Cluster incident
 
 Date: 2022-08-24
 
@@ -18,26 +18,39 @@ tableau-server-prod-eu-3
 
 Impact: Unknown
 
-Root Causes: 
+Root Causes: Some permission changes should be performed on a perticular log directory inside the /Var folder in order to run a harness shell script, however we made the permission changes for /var directory recursively, which affects the file permssions for tableu services and ssh service inside all 3 nodes of Tableau servers.
 
-Trigger: Latent bug triggered by sudden increase in traffic.
 
-Resolution: Directed traffic to sacrificial cluster and added 10x capacity to mitigate cascading failure. Updated index deployed, resolving interaction with latent bug. Maintaining extra capacity until surge in public interest in new sonnet passes. Resource leak identified and fix deployed.
+Trigger: Manual execution
 
-Detection: Borgmon detected high level of HTTP 500s and paged on-call.
+Resolution: Replicated all the file permssions from a demo server where Tableau service was running, we checked all the files/directories permissions present under the /Var and set the same permission on Node1, Node2 and Node3.
+
+
+
+Detection: Rackspace Infra team detected that tableau servers are un-responsive and team is unable to SSH Tableau nodes.
 
 Action Items:^165^
 
 Action Item	Type	Owner
-Update playbook with instructions for responding to cascading failure	mitigate	jennifer
-Use flux capacitor to balance load between clusters	prevent	martym
-Schedule cascading failure test during next DiRT	process	docbrown
-Investigate running index MR/fusion continuously	prevent	jennifer
-Plug file descriptor leak in search ranking subsystem	prevent	agoogler
-Add load shedding capabilities to Shakespeare search	prevent	agoogler
-Build regression tests to ensure servers respond sanely to queries of death	prevent	clarac
-Deploy updated search ranking subsystem to prod	prevent	jennifer
-Freeze production until 2015-11-20 due to error budget exhaustion, or seek exception due to grotesque, unbelievable, bizarre, and unprecedented circumstances	other	docbrown
+
+Day1
+Raised a support case with MGCP team to stating the SSH issue - Aravind (Zeotap)
+Informed the engagement manager over the phone and expalined that MGCP is not cosidering this case as P1 - Shubham (Rackspace)
+Investigated the serial console logs with zeotap team and found that the permssion/ownership for /var/empty/sshd is not correct (Zeotap/Rackapce) 
+
+<img width="1422" alt="image" src="https://user-images.githubusercontent.com/106727340/187621975-bda5c3e4-9fc9-4028-a53f-77cfa1c1e8db.png">
+
+Created a bash startup script to add a temp user and change the permssion for /var/empty/sshd (Zeotap/Rackspace)
+Stopped all the VMs and executed the startup script on all 3 nodes through Metadata scripts option present in GCP VMs. (Zeotap/Rackspace)
+Rebooted the machine and from now we were able to SSH Tableau nodes. (Zeotap/Rackspace)
+Checked the application status - tsm status -v and found that Application is not running on VM. (Zeotap)
+
+Day2
+We created a clone server from an older snapshot (Jan 2022)
+Checked permssion for /var files and folder on clone server and replicated the same on Node1 Node2 and Node3
+
+
+
 Lessons Learned
 What went well
 
