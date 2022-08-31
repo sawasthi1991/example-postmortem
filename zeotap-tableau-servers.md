@@ -21,92 +21,90 @@ Root Causes: Some permission changes should be performed on a perticular log dir
 
 Trigger: Manual execution
 
-Resolution: Replicated all the file permssions from a demo server where Tableau service was running, we checked all the files/directories permissions present under the /Var and set the same permission on Node1, Node2 and Node3.
+Resolution: Replicated all the file permssions from a demo server where Tableau service was running, we checked all the files/directories permissions present under the /var in demo server and set the same permission on Node1, Node2 and Node3.
 
 
 
 Detection: Rackspace Infra team detected that tableau servers are un-responsive and team is unable to SSH Tableau nodes.
 
 
-Action Item	Type	Owner
+Action Items: 
 
-Day1
-Raised a support case with MGCP team to stating the SSH issue - Aravind
-Informed the engagement manager over the phone and expalined that MGCP is not cosidering this case as P1 - Shubham 
-Investigated the serial console logs with zeotap team and found that the permssion/ownership for /var/empty/sshd is not correct (Zeotap/Rackapce) 
+Day1-
+Raised a support case with MGCP team to stating the SSH issue - Aravind Informed the engagement manager over the phone and explained that MGCP is not considering this case as P1.
 
+Investigated the serial console logs with zeotap team and found that the permission/ownership for /var/empty/sshd is not correct.
 
-Created a bash startup script to add a temp user and change the permssion for /var/empty/sshd 
-Stopped all the VMs and executed the startup script on all 3 nodes through Metadata scripts option present in GCP VMs. (Zeotap/Rackspace)
-Rebooted the machine and from now we were able to SSH Tableau nodes. (Zeotap/Rackspace)
-Checked the application status - tsm status -v and found that Application is not running on VM. 
+Created a bash startup script to add a temp user and change the permission for /var/empty/sshd.Stopped all the VMs and executed the startup script on all 3 nodes through Metadata scripts option present in GCP VMs.
 
-Day2
-We created a clone server from an older snapshot (Jan 2022)
-Checked permssion for /var files and folder on clone server and replicated the same on Node1 Node2 and Node3
+Rebooted the machine and from now, we were able to SSH Tableau nodes.
+
+Checked the application status - tsm status -v and found that Application is not running on VM.
 
 
 
-Lessons Learned
-What went well
+Day2-
+Removed all ACL's from /var/opt/xxx/xxx/xxx/backgrounder (setfacl -b -R var).
 
-Monitoring quickly alerted us to high rate (reaching ~100%) of HTTP 500s
-Rapidly distributed updated Shakespeare corpus to all clusters
-What went wrong
+Created a clone server from an older snapshot (Jan 2022).Checked permssion for /var files and folder on clone server and replicated the same on Node1, Node2 and Node3.
 
-We're out of practice in responding to cascading failure
-We exceeded our availability error budget (by several orders of magnitude) due to the exceptional surge of traffic that essentially all resulted in failures
-Where we got lucky [166]
+Checked permission for /var files and folder on clone server and replicated the same on Node1, Node2 and Node3.
 
-Mailing list of Shakespeare aficionados had a copy of new sonnet available
-Server logs had stack traces pointing to file descriptor exhaustion as cause for crash
-Query-of-death was resolved by pushing new index containing popular search term
-Timeline [167]
-2015-10-21 (all times UTC)
+Checked the application status again and found that it is not running.
 
-14:51 News reports that a new Shakespearean sonnet has been discovered in a Delorean's glove compartment
-14:53 Traffic to Shakespeare search increases by 88x after post to /r/shakespeare points to Shakespeare search engine as place to find new sonnet (except we don't have the sonnet yet)
-14:54 OUTAGE BEGINS --- Search backends start melting down under load
-14:55 docbrown receives pager storm, ManyHttp500s from all clusters
-14:57 All traffic to Shakespeare search is failing: see https://monitor
-14:58 docbrown starts investigating, finds backend crash rate very high
-15:01 INCIDENT BEGINS docbrown declares incident #465 due to cascading failure, coordination on #shakespeare, names jennifer incident commander
-15:02 someone coincidentally sends email to shakespeare-discuss@ re sonnet discovery, which happens to be at top of martym's inbox
-15:03 jennifer notifies shakespeare-incidents@ list of the incident
-15:04 martym tracks down text of new sonnet and looks for documentation on corpus update
-15:06 docbrown finds that crash symptoms identical across all tasks in all clusters, investigating cause based on application logs
-15:07 martym finds documentation, starts prep work for corpus update
-15:10 martym adds sonnet to Shakespeare's known works, starts indexing job
-15:12 docbrown contacts clarac & agoogler (from Shakespeare dev team) to help with examining codebase for possible causes
-15:18 clarac finds smoking gun in logs pointing to file descriptor exhaustion, confirms against code that leak exists if term not in corpus is searched for
-15:20 martym's index MapReduce job completes
-15:21 jennifer and docbrown decide to increase instance count enough to drop load on instances that they're able to do appreciable work before dying and being restarted
-15:23 docbrown load balances all traffic to USA-2 cluster, permitting instance count increase in other clusters without servers failing immediately
-15:25 martym starts replicating new index to all clusters
-15:28 docbrown starts 2x instance count increase
-15:32 jennifer changes load balancing to increase traffic to nonsacrificial clusters
-15:33 tasks in nonsacrificial clusters start failing, same symptoms as before
-15:34 found order-of-magnitude error in whiteboard calculations for instance count increase
-15:36 jennifer reverts load balancing to resacrifice USA-2 cluster in preparation for additional global 5x instance count increase (to a total of 10x initial capacity)
-15:36 OUTAGE MITIGATED, updated index replicated to all clusters
-15:39 docbrown starts second wave of instance count increase to 10x initial capacity
-15:41 jennifer reinstates load balancing across all clusters for 1% of traffic
-15:43 nonsacrificial clusters' HTTP 500 rates at nominal rates, task failures intermittent at low levels
-15:45 jennifer balances 10% of traffic across nonsacrificial clusters
-15:47 nonsacrificial clusters' HTTP 500 rates remain within SLO, no task failures observed
-15:50 30% of traffic balanced across nonsacrificial clusters
-15:55 50% of traffic balanced across nonsacrificial clusters
-16:00 OUTAGE ENDS, all traffic balanced across all clusters
-16:30 INCIDENT ENDS, reached exit criterion of 30 minutes' nominal performance
-Supporting information: [168]
-[163]Impact is the effect on users, revenue, etc.
 
-[164] An explanation of the circumstances in which this incident happened. It's often helpful to use a technique such as the 5 Whys [Ohn88] to understand the contributing factors.
 
-[165] "Knee-jerk" AIs often turn out to be too extreme or costly to implement, and judgment may be needed to re-scope them in a larger context. There's a risk of over-optimizing for a particular issue, such as adding specific monitoring/alerting when reliable mechanisms like unit tests can catch problems much earlier in the development process.
+Day3-
+Had a call with tableau support where support person checked the application controller status and logs, and found that, admin controller is not working over the node1 so we have been adviced by support to re-install the tab admin controller on node1 and check the admin controller logs after completion of installation to identify if there are any permission exceptions in the admin controller logs under /var/opt/tableau/xxx/xxx/xxx/logs/tabadmincontroller.
 
-[166] This section is really for near misses, e.g., "The goat teleporter was available for emergency use with other animals despite lack of certification."
+Changed the permissions for particular directories which were listed as exceptions in the admin controller logs. At this stage there were no more permission exceptions however a new error occured-
+Caused by: java.lang.RuntimeException: org.apache.commons.exec.ExecuteException: Error while running openssl. Error Code 1. See output above for details. (Exit value: 1)
 
-[167] A "screenplay" of the incident; use the incident timeline from the Incident Management document to start filling in the postmortem's timeline, then supplement with other relevant entries.
+This error was troubleshooted by client over the weekend and they made few more changes to start the tableau services on node1 and tableau services were showing up and running 89/90 in tableau GUI console.
 
-[168] Useful information, links, logs, screenshots, graphs, IRC logs, IM logs, etc.
+
+
+Day4 and Day5-
+In further troubleshooting we found tableau Gateway service was in error state.
+
+Checked the apache startup and error logs and found proxy mutex error and also some permission related exceptions for apache_access_logs as it was owned by "root"  instead of "tableau" user.
+
+Changed the ownership for apache_access_logs and restarted all three nodes.
+After making these changes, checked the application status on node1, node2 and node3 which was running so we requested BI team to verify the application data.
+
+Received the formal confirmation from BI team on 30 August at 4PM IST that all services are running without any issues.
+
+
+
+
+Lessons Learned-
+
+Backup policy should be in place, automated daily or weekly snapshots should be always scheduled for critical applications.
+
+Although permssion had changed on a day before (23th Aug'22) but we observed the issue on 24th Aug when we tried to SSH one of the cluster's node.
+Which makes clear that Monitoring policies are not configured. There should be monitoring alerts/Uptime checks to monitor the application status.
+
+Never perform changes in Production environment as "production changes" should be always performed in well planned "change-management" process with a roll-back plan if anything goes wrong in production.
+
+Some linux commands are too small but very powerful, so please always execute them in a test environment unless you dont know the impact/output of the command.
+
+Never change the file/folder permissions which has application files, as It can intrupt the running services.
+
+While performing the production changes, always go in a sequence, for example -
+If same changes need to performed in a cluster of 3 nodes - 
+
+1. Take the latest snapshot of 1st node.
+2. Peform the neccessary changes.
+3. Verify the application and services status.
+4. If everything is working, only then move to the 2nd node.
+5. Take the latest snapshot of 2nd node.
+6. Peform the neccessary changes.
+7. Verify the application and services status on 2nd node and continue in the same sequence ........!
+
+
+
+
+
+
+
+
