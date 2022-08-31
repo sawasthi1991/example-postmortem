@@ -1,4 +1,4 @@
-Zeotap-Tableau-Cluster incident
+Tableau-Cluster incident
 
 Date: 2022-08-24
 
@@ -8,13 +8,11 @@ Status: In-progress
 
 Summary: Tableau application down and Infra team is unable to SSH in all 3 tableau VMs -
 
-Project:
-zeotap-prod-corpwebsite
 
 VM Names:
-tableau-server-prod-eu-1
-tableau-server-prod-eu-2
-tableau-server-prod-eu-3
+tableau-xxx-xxx-eu-1
+tableau--xxx-xxx-eu-2
+tableau--xxx-xxx-eu-3
 
 Impact: Unknown
 
@@ -29,21 +27,19 @@ Resolution: Replicated all the file permssions from a demo server where Tableau 
 
 Detection: Rackspace Infra team detected that tableau servers are un-responsive and team is unable to SSH Tableau nodes.
 
-Action Items:^165^
 
 Action Item	Type	Owner
 
 Day1
-Raised a support case with MGCP team to stating the SSH issue - Aravind (Zeotap)
-Informed the engagement manager over the phone and expalined that MGCP is not cosidering this case as P1 - Shubham (Rackspace)
+Raised a support case with MGCP team to stating the SSH issue - Aravind
+Informed the engagement manager over the phone and expalined that MGCP is not cosidering this case as P1 - Shubham 
 Investigated the serial console logs with zeotap team and found that the permssion/ownership for /var/empty/sshd is not correct (Zeotap/Rackapce) 
 
-<img width="1422" alt="image" src="https://user-images.githubusercontent.com/106727340/187621975-bda5c3e4-9fc9-4028-a53f-77cfa1c1e8db.png">
 
-Created a bash startup script to add a temp user and change the permssion for /var/empty/sshd (Zeotap/Rackspace)
+Created a bash startup script to add a temp user and change the permssion for /var/empty/sshd 
 Stopped all the VMs and executed the startup script on all 3 nodes through Metadata scripts option present in GCP VMs. (Zeotap/Rackspace)
 Rebooted the machine and from now we were able to SSH Tableau nodes. (Zeotap/Rackspace)
-Checked the application status - tsm status -v and found that Application is not running on VM. (Zeotap)
+Checked the application status - tsm status -v and found that Application is not running on VM. 
 
 Day2
 We created a clone server from an older snapshot (Jan 2022)
